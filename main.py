@@ -61,17 +61,20 @@ def haiku() -> str:
     return "\n".join(haiku_lines())
 
 
-def _check_shape(text: str) -> None:
-    per_line = [line_syllables(ln) for ln in text.split("\n")]
+def verify_shape() -> None:
+    """Guard the entry: 5-7-5 syllables per line and ≤200 total characters."""
+    lines = haiku_lines()
+    per_line = [line_syllables(ln) for ln in lines]
     if per_line != list(EXPECTED_SHAPE):
         raise ValueError(f"haiku shape {per_line} != expected {list(EXPECTED_SHAPE)}")
+    text = "\n".join(lines)
     if len(text) > 200:
         raise ValueError(f"haiku is {len(text)} chars (max 200)")
 
 
 def main() -> None:
     text = haiku()
-    _check_shape(text)
+    verify_shape()
     out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, "entry.txt")
